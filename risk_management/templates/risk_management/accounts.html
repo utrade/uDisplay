@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+/*
+ *  Accounts page Template
+ *
+ *  /risk_management/templates/risk_managemnet/accounts.html
+ *  Created By Mayank Jain 
+ */
+
+{% block content %}
+    <!-- Navbar -->
+    <nav class="navbar navbar-default navbar-static-top" role="navigation">
+    <div class="container-fluid">
+
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#"><b>uDisplay</b></a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active">
+                    <a href="#">Accounts</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <form action="" class="navbar-form" role="search">
+                        <div class="input-group">
+                            <input type="text" id="search_name" class="form-control" placeholder="Search"/>
+                            <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
+                        </div>
+                    </form>
+                </li>
+                <!--<li class="navbar-right"><a href="/logout">Sign out</a></li>-->
+                <li class="dropdown navbar-right">
+                <a href="#" class="username" data-toggle="dropdown" role="button" aria-expanded="false">{{result.username}} <span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="/logout">Sign Out</a></li>
+                </ul>
+                </li>
+            </ul>
+        </div><!-- .navbar-collapse end -->
+    </div><!-- .container-fluid end -->
+    </nav><!-- navbar end-->
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="wrapper">
+            <div class="panel-heading accounts_panel_heading">
+                    <span class="glyphicon glyphicon-th-list" aria-hidden="true" alt="Risk Icon"></span>
+                    <strong class="head">Risk</strong>
+                    <strong class="numAccounts">Showing 0 of 0 Accounts</strong>
+
+                    <span class="glyphicon glyphicon-user" aria-hidden="true" alt="Accounts Icon" rel="tooltip" data-container="body" data-placement="top" title="Pick Accounts" data-toggle="modal" data-target="#selectAccounts" class="pull-right" style="margin-right: 20px;float: right; cursor:pointer;height:30px;width:30px"></span>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="selectAccounts" tabindex="-1" role="dialog" aria-labelledby="PickAccounts" aria-hidden="true">
+                        <div class="modal-dialog modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <div class="well well-sm">
+                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                    <h3 class="modal-title text-center" id="pickAccounts">
+                                        <span class="glyphicon glyphicon-user" aria-hidden="true" alt="Accounts Icon"></span> Accounts Picker
+                                    </h3>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <button type="button" class="btn btn-default btn-block bulk_select pull-left">Select All</button>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <input type="text" id="accounts_search" class="form-control" placeholder="Search"/>
+                                    </div>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="panel panel-default" style="border:0;">
+                                        <div class="panel-body accounts_picker_body">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button id="selectedAccounts" type="button" class="btn btn-default">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--Account Picker Modal end-->
+            </div>
+            <div class="panel panel-default">
+                <!--<div >
+                </div>--><!--Panel Heading end-->
+                <div class="panel-body">
+                    <div class="table-responsive accounts_table">
+                        <table class="table table-condensed table-bordered accounts_tbody" id="accounts_accordion">
+
+                        </table><!-- .table #accordian end -->
+                    </div><!-- outer table-responsive -->
+                </div>
+            </div>
+        </div><!--.wrapper end-->
+    </div><!--.row end-->
+</div><!--.container end-->
+
+{% endblock %}
+
+{% block extra_js %}
+
+<!--Accounts Picker template-->
+<script type="text/template" id="accounts_picker">
+    <label class="account_picker_<%= accountid %>">
+        <input type="checkbox" value="<%= accountid %>">
+        <p><%= accountname %></p>
+    </label>
+</script>
+
+<!--Accounts table header template-->
+<script type="text/template" id="accounts_page">
+    <thead class="text-center">
+        <tr class="default accounts_head_row">
+            <th class="sortTable" column="accountname"  data-toggle="tooltip" data-container="body" data-placement="top" title="Account Name"><div>Account Name</div></th>
+            <th class="sortTable" column="netLiquidity" style="text-align:right;" data-toggle="tooltip" data-container="body" data-placement="top" title="Gross liquidity + Locked away P&L"><div>Net Liq</div></th>
+            <th class="sortTable" column="netProfitLoss" style="text-align:right;" data-toggle="tooltip" data-container="body" data-placement="top" title="Profit and loss on the day"><div>P&L</div></th>
+            <th class="sortTable" column="netMargin" style="text-align:right;" data-toggle="tooltip" data-container="body" data-placement="top" title="margin requirement"><div>Margin</div></th>
+            <th class="sortTable" column="netBalance" style="text-align:right;" data-toggle="tooltip" data-container="body" data-placement="top" title="Net liquidity – Commission & P&L"><div>Balance</div></th>
+            <th class="sortTable" column="netEquity" style="text-align:right;" data-toggle="tooltip" data-container="body" data-placement="top" title="Balance – NLV – Margin"><div>Net Equity</div></th>
+            <th class="sortTable" column="netProfitLossPer" style="text-align:right;" data-toggle="tooltip" data-container="body" data-placement="top" title="P&L as percentage of net liquidity"><div>P&L%</div></th>
+            <th class="sortTable" column="netMarginPer" style="text-align:right;" data-toggle="tooltip" data-container="body" data-placement="top" title="Overall margin as a percentage of net liquidity"><div>Marg Util%</div></th>
+        </tr>
+    </thead>
+    <tbody id="names">
+    </tbody><!--#names end-->
+</script>
+
+<!--Accounts table row template-->
+<script type="text/template" id="account_row">
+    <td id="account_name" class="accountid_<%= accountid %>"><%= accountname %></td>
+    <td style="text-align:right;" class="gradient <% if(parseFloat(netLiquidity)>0){ %> positive <% } if(parseFloat(netLiquidity)<0){ %> negative <% } %>"><%= format(netLiquidity, 'float') %></td>
+    <td style="text-align:right;" class="gradient <% if(parseFloat(netProfitLoss)>0){ %> positive <% } if(parseFloat(netProfitLoss)<0){ %> negative <% } %>"><%= format(netProfitLoss, 'float') %></td>
+    <td style="text-align:right;"><%= format(netMargin, 'float') %></td>
+    <td style="text-align:right;" class="gradient <% if(parseFloat(netBalance)>0){ %> positive <% } if(parseFloat(netBalance)<0){ %> negative <% } %>"><%= format(netBalance, 'float') %></td>
+    <td style="text-align:right;" class="gradient <% if(parseFloat(netEquity)>0){ %> positive <% } if(parseFloat(netEquity)<0){ %> negative <% } %>"><%= format(netEquity, 'float') %></td>
+    <td style="text-align:right;" class="gradient <% if(parseFloat(netProfitLossPer)>0){ %> positive <% } if(parseFloat(netProfitLossPer)<0){ %> negative <% } %>"><%= format(netProfitLossPer, 'float') %></td>
+    <td style="text-align:right;" class="gradient <% if(parseFloat(netMarginPer)>0){ %> positive <% } if(parseFloat(netMarginPer)<0){ %> negative <% } %>"><%= format(netMarginPer, 'float') %></td>
+</script>
+
+<script src="{% static "uDisplay/js/accounts_extended.js" %}" type="text/javascript"></script>
+<script src="{% static "uDisplay/js/lib/underscore-min.js" %}" type="text/javascript"></script>
+<script src="{% static "uDisplay/js/lib/backbone-min.js" %}" type="text/javascript"></script>
+<script src="{% static "uDisplay/js/lib/backbone.localStorage-min.js" %}" type="text/javascript"></script>
+<script src="{% static "uDisplay/js/models/accounts.js" %}" type="text/javascript"></script>
+<script src="{% static "uDisplay/js/collections/accounts_data.js" %}" type="text/javascript"></script>
+<script src="{% static "uDisplay/js/views/accounts_view.js" %}" type="text/javascript"></script>
+
+<script>
+    // Socket connection Path
+    var socket_path = "{{result.SocketPath}}";
+    // Socket Connection Port for DEV
+    var port = "{{result.TornadoPort}}";
+    // Username for further use in JS
+    var username = "{{result.username}}";
+
+    // User's seleted accounts from database
+    selected_accounts = {{result.selected_accounts_list|safe}};
+    {% if result.error %}
+        // If data not available than model initialize with default data
+        var data = [
+            {
+                username: '{{result.username}}',
+                page: '{{result.page}}',
+                error: '{{result.error}}',
+                accountid: '9999999999',
+            }
+        ];
+    {% elif not result.error %}
+        var data = [
+        {% for account in result.data.accountdetails %}
+            {
+                {% if account.accountdata %}
+                accountid: '{{account.accountdata.accountid}}',
+                accountname: '{{account.accountdata.accountname}}',
+                {% endif %}
+                {% if account.riskdata %}
+                    netLiquidity: '{{account.riskdata.netLiquidity}}',
+                    netProfitLoss: '{{account.riskdata.netProfitLoss}}',
+                    netMargin: '{{account.riskdata.netMargin}}',
+                    netBalance: '{{account.riskdata.netBalance}}',
+                    netEquity: '{{account.riskdata.netEquity}}',
+                    {% if account.riskdata.netProfitLossPer %}
+                        netProfitLossPer: '{{account.riskdata.netProfitLossPer}}',
+                    {% endif %}
+                    {% if account.riskdata.netProfitLossPer %}
+                        netMarginPer: '{{account.riskdata.netMarginPer}}',
+                    {% endif %}
+                {% endif %}
+            },
+        {% endfor %}
+        ];
+    {% endif %}
+
+</script>
+
+
+{% endblock %}

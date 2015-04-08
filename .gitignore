@@ -1,0 +1,6 @@
+*.pyc
+*.swp
+*.db
+db.*
+neon/neon/local_settings.py
+neon/risk_management/migrations

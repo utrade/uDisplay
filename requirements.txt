@@ -1,0 +1,8 @@
+Django==1.7
+ipython==2.2.0
+simplejson==3.6.3
+tornado==4.0.1
+sockjs-tornado==1.0.1
+protobuf==2.6.1
+psycopg2==2.6
+pyzmq==14.5.0

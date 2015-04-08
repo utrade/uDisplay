@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load url from future %}
+{% load staticfiles %}
+
+{% block content %}
+<div class="container">
+    <div class="row fill">
+        <div class="col-md-8 col-md-offset-2 wrapper">
+            <div class="row">
+                <div class="logo"><img id="bg" src="{% static "uDisplay/images/banner4.jpg" %}" alt="" /></div>
+            <hr />
+
+            <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 auth-form text-center">
+                <form class="form-horizontal col-md-8 col-md-offset-2" role="form" method="post" action="/login/">
+                    {% csrf_token %}
+                    {% if form.errors %}
+                        {% if not form.username.errors and not form.password.errors %}
+                        {{ form.errors }}
+                        {% endif %}
+                    {% endif %}
+                    {% if messages %}
+                    <ul class="messages errorlist">
+                        {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                        {{ message }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    <div class="form-group">
+                            {{ form.username }}
+                    </div>
+                    <div class="form-group">
+                            {{ form.password }}
+                    </div>
+                    <div class="form-group">
+                        <div class="">
+                            <button type="submit" class="btn btn-success btn-lg">Enter <span class="glyphicon glyphicon-arrow-right"></span></button>
+                            <input type="hidden" name="next" value={{ next }}/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('body').css( "background-color", "#b3b3b3" );
+            $('html').css( "background-color", "#b3b3b3" );
+            $(".errorlist").addClass("list-unstyled alert alert-danger");
+            if($('#id_username').val().length != 0) {
+                $("#id_password").focus();
+            }
+            else {
+                $("#id_username").focus();
+            }
+
+            // Disable Enter until Username and Password filled
+            $('button').attr('disabled', 'disabled');
+            $('.form-horizontal input').keyup(function() {
+
+                var empty = false;
+                $('.form-horizontal input').each(function() {
+                    if ($(this).val().length == 0) {
+                    empty = true;
+                    }
+                });
+
+                if (empty) {
+                $('button').attr('disabled', 'disabled');
+                } else {
+                $('button').removeAttr('disabled');
+                }
+            });
+        });
+    </script>
+{% endblock %}
