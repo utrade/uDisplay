@@ -1,5 +1,5 @@
 #uDisplay
-#####uDisplay is web module based on Django and Tornado to display realtime data on web.
+####uDisplay is web module based on Django and Tornado to display realtime data on web.
 
 #Getting Started
 
@@ -8,10 +8,10 @@
    pip install -r requirements.txt
 ```
 ## Setting Up
-Copy uDisplay.example_local_settings.py to uDisplay.local_settings.py
-Change settings in uDisplay.local_settings.py
+Copy **uDisplay.example_local_settings.py** to **uDisplay.local_settings.py**.
+Change settings in **uDisplay.local_settings.py**.
 
-Modify utils.config.py to attach uDisplay to other data servers or test it with mock servers
+Modify **utils.config.py** to attach uDisplay to other data servers or test it with mock servers
 
 * utils.test_server.py for authentication
 * utils.push_server.py to push realtime data to be published
@@ -33,6 +33,6 @@ Modify utils.config.py to attach uDisplay to other data servers or test it with 
 + test_server is for authentication
 
   - Use any username and password for this server to get authenticated.
-  - If you want push data from push_server use 'mjain' as username.
+  - If you want push data from push_server use **mjain** as username.
 
-+ push_server publish mock data for 'mjain' client.
++ push_server publish mock data for **mjain** client.
