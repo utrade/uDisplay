@@ -32,6 +32,7 @@ Modify utils.config.py to attach uDisplay to other data servers or test it with 
 
 + test_server is for authentication
 
-  - Use any username and password for this server to get authenticated. But if you want push data from push_server use 'mjain' as username.
+  - Use any username and password for this server to get authenticated.
+  - If you want push data from push_server use 'mjain' as username.
 
 + push_server publish mock data for 'mjain' client.
