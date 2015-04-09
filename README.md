@@ -33,6 +33,10 @@ Modify **utils.config.py** to attach uDisplay to other data servers or test it w
 + test_server is for authentication
 
   - Use any username and password for this server to get authenticated.
-  - If you want push data from push_server use **mjain** as username.
+  - If you want push data from push_server use **utrade** as username.
 
-+ push_server publish mock data for **mjain** client.
++ push_server publish mock data for **utrade** client.
+
+# License
+
+This project is under the [GNU AGPL](./LICENSE) license.
