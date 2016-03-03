@@ -1,0 +1,3 @@
+[run]
+source = udisplay/
+omit = '*tests*,*commands*,*migrations*,*admin*,*wsgi*'

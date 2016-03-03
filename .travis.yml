@@ -1,0 +1,40 @@
+language: python
+sudo: false
+python:
+- '2.7'
+
+addons:
+  postgresql: "9.4"
+
+before_script:
+- export DATABASE_URL=postgres://postgres@localhost/udisplay
+- export DJANGO_SECRET=`openssl rand -base64 32`
+- psql -c "CREATE DATABASE udisplay;" -U postgres
+
+
+install:
+  - pip install ansible
+  - pip install -r requirements/development.txt
+
+script:
+- flake8
+- py.test --cov -v --tb=native
+- ansible-playbook -i provisioner/hosts provisioner/site.yml --syntax-check
+
+notifications:
+  email:
+    on_success: change  # [always|never|change]
+    on_failure: always  # [always|never|change]
+deploy:
+  provider: heroku
+  buildpack: python
+  strategy: api
+  api_key:
+    # travis encrypt $(heroku auth:token) --add deploy.api_key
+    secure: <add_heroku_auth_token_here>
+  app:
+    master: udisplay-dev
+    qa: udisplay-qa
+    prod: udisplay-prod
+  on:
+    repo: jainmickey/uDisplay

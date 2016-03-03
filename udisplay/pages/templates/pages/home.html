@@ -1,0 +1,129 @@
+{% extends "pages/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+    <!-- Navbar -->
+    <nav class="navbar navbar-default navbar-static-top" role="navigation">
+    <div class="container-fluid">
+
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#"><b>uDisplay</b></a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active">
+                    <a href="#">Data</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <form action="" class="navbar-form" role="search">
+                        <div class="input-group">
+                            <input type="text" id="search_name" class="form-control" placeholder="Search"/>
+                            <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
+                        </div>
+                    </form>
+                </li>
+                <li class="dropdown navbar-right">
+                <a href="#" class="username" data-toggle="dropdown" role="button" aria-expanded="false">{{ request.user.username }} <span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="/logout">Sign Out</a></li>
+                </ul>
+                </li>
+            </ul>
+        </div><!-- .navbar-collapse end -->
+    </div><!-- .container-fluid end -->
+    </nav><!-- navbar end-->
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="wrapper">
+            <div class="panel-heading accounts_panel_heading">
+                <span class="glyphicon glyphicon-th-list" aria-hidden="true" alt="Risk Icon"></span>
+                <strong class="head">Risk</strong>
+                <strong class="numAccounts">Showing 0 of 0 Accounts</strong>
+
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="table-responsive accounts_table">
+                        <table class="table table-condensed table-bordered accounts_tbody" id="accounts_accordion">
+
+                        </table><!-- .table #accordian end -->
+                    </div><!-- outer table-responsive -->
+                </div>
+            </div>
+        </div><!--.wrapper end-->
+    </div><!--.row end-->
+</div><!--.container end-->
+
+{% endblock %}
+
+{% block extra_js %}
+
+<!--Accounts table header template-->
+<script type="text/template" id="accounts_page">
+    <thead class="text-center">
+        <tr class="default accounts_head_row">
+            <th class="sortTable" column="accountname"  data-toggle="tooltip" data-container="body" data-placement="top" title="Account Name"><div>Account Name</div></th>
+            <th class="sortTable" column="netLiquidity" style="text-align:right;" data-toggle="tooltip" data-container="body" data-placement="top" title="Gross liquidity + Locked away P&L"><div>Net Liq</div></th>
+            <th class="sortTable" column="netProfitLoss" style="text-align:right;" data-toggle="tooltip" data-container="body" data-placement="top" title="Profit and loss on the day"><div>P&L</div></th>
+            <th class="sortTable" column="netMargin" style="text-align:right;" data-toggle="tooltip" data-container="body" data-placement="top" title="margin requirement"><div>Margin</div></th>
+            <th class="sortTable" column="netBalance" style="text-align:right;" data-toggle="tooltip" data-container="body" data-placement="top" title="Net liquidity – Commission & P&L"><div>Balance</div></th>
+            <th class="sortTable" column="netEquity" style="text-align:right;" data-toggle="tooltip" data-container="body" data-placement="top" title="Balance – NLV – Margin"><div>Net Equity</div></th>
+        </tr>
+    </thead>
+    <tbody id="names">
+    </tbody><!--#names end-->
+</script>
+
+<!--Accounts table row template-->
+<script type="text/template" id="account_row">
+    <td id="account_name" class="accountid_<%= accountid %>"><%= accountname %></td>
+    <td style="text-align:right;" class="gradient <% if(parseFloat(netLiquidity)>0){ %> positive <% } if(parseFloat(netLiquidity)<0){ %> negative <% } %>"><%= format(netLiquidity, 'float') %></td>
+    <td style="text-align:right;" class="gradient <% if(parseFloat(netProfitLoss)>0){ %> positive <% } if(parseFloat(netProfitLoss)<0){ %> negative <% } %>"><%= format(netProfitLoss, 'float') %></td>
+    <td style="text-align:right;"><%= format(netMargin, 'float') %></td>
+    <td style="text-align:right;" class="gradient <% if(parseFloat(netBalance)>0){ %> positive <% } if(parseFloat(netBalance)<0){ %> negative <% } %>"><%= format(netBalance, 'float') %></td>
+    <td style="text-align:right;" class="gradient <% if(parseFloat(netEquity)>0){ %> positive <% } if(parseFloat(netEquity)<0){ %> negative <% } %>"><%= format(netEquity, 'float') %></td>
+</script>
+
+<script src="{% static "js/accounts_extended.js" %}" type="text/javascript"></script>
+<script src="{% static "js/lib/underscore-min.js" %}" type="text/javascript"></script>
+<script src="{% static "js/lib/backbone-min.js" %}" type="text/javascript"></script>
+<script src="{% static "js/lib/backbone.localStorage-min.js" %}" type="text/javascript"></script>
+<script src="{% static "js/models/accounts.js" %}" type="text/javascript"></script>
+<script src="{% static "js/collections/accounts_data.js" %}" type="text/javascript"></script>
+<script src="{% static "js/views/accounts_view.js" %}" type="text/javascript"></script>
+
+<script>
+    // Socket connection Path
+    var socket_path = "{{ SocketPath }}";
+    // Socket Connection Port for DEV
+    var port = "{{ TornadoPort }}";
+    // Username for further use in JS
+    var username = "{{ request.user.username }}";
+    // Token for authorization
+    var token = "{{ AuthToken }}";
+
+    // If data not available than model initialize with default data
+    var data = [
+        {
+            username: '{{ request.user.username }}',
+            error: '{{ result.error }}',
+            accountid: '9999999999',
+        }
+    ];
+</script>
+
+
+{% endblock %}
