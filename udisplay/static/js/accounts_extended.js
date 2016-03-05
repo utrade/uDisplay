@@ -62,6 +62,7 @@ function ConnectSocket() {
             }
             else {
                 update_data(e.data);
+                console.log("Message: ", e.data);
             }
         }
     };

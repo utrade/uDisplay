@@ -73,6 +73,7 @@ def zmq_socket(pool, exit_app):
                 zmq.NotDone, zmq.ZMQBindError) as e:
             logger.error("Error in receiving data: {}".format(e))
         if message:
+            logger.info("msg: {}".format(str(msg)))
             pool.apply_async(send_msg_to_web_console, (data,))
 
 
@@ -98,8 +99,9 @@ def send_msg_to_web_console(message):
     for client in Listeners.keys():
         try:
             request = Listeners[client]
-            logger.info("msg: {}".format(str(message)))
             if message.get('updaterisk'):
+                data = message.get('updaterisk').get('riskdata')
+                data['accountid'] = message.get('updaterisk').get('accountid')
                 request.send(message.get('updaterisk').get('riskdata'))
             if message.get('updateaccount'):
                 request.send(message.get('updateaccount').get('accountdata'))
