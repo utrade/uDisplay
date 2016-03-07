@@ -1,6 +1,5 @@
 /*
- * static/uDisplay/js/views/accounts_view.js
- * Created By Mayank Jain
+ * static/js/views/accounts_view.js
  */
 
 /**
@@ -53,7 +52,6 @@ app.AccountsView = Backbone.View.extend({
     initialize: function( initialData, data_collection ) {
         this.collection = data_collection
         this.totalAccounts = 0; // Saving Number of Total Accounts
-        this.shownAccounts = 0; // Saving Number of Shown Accounts
         this.render();
 
         this.listenTo(this.collection, 'add', this.addOne);
@@ -63,9 +61,8 @@ app.AccountsView = Backbone.View.extend({
     // render data by each row
     render: function() {
 
-        // Reset totalAccounts and shownAccounts
+        // Reset totalAccounts
         this.totalAccounts = 0;
-        this.shownAccounts = 0;
 
         this.$el.html(this.template());
         $('.accounts_picker_body').html('');

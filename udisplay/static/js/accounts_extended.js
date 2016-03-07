@@ -1,8 +1,7 @@
 /*
  * Accounts Extended JS
- * static/uDisplay/js/accounts_extended.js
+ * static/js/accounts_extended.js
  *
- * Created By Mayank Jain
  */
 
 
@@ -16,18 +15,28 @@ var data_collection;
  * @param Socket Data as result
  */
 function update_data(result) {
-    if (result['error'] == null) {
+    if (result && result.hasOwnProperty('updaterisk')) {
+        var data = result['updaterisk']['riskdata']
+        data['accountid'] = result['updaterisk']['accountid']
+    }
+    if (result && result.hasOwnProperty('updateaccount')) {
+        var data = result['updateaccount']['accountdata']
+    }
+
+    if (data && data['error'] == null) {
 
         // Merge updated data
-        data_collection.add([result],{merge: true});
+        data_collection.add([data],{merge: true});
 
-        // Removes Loading
+        // Removes Loader
         if($(".spinner").length > 0) {
             document.getElementsByClassName('.spinner')[0];
             $(".spinner").remove();
         }
     }
     else {
+
+        // TODO: Check error in result
         console.log(result['Error']);
     }
 }
@@ -57,8 +66,8 @@ function ConnectSocket() {
         if (e.data != 'add') {
             if(e.data == 'Logout') {
                 // If logout from backend
-                window.location.href = "http://" + location.host;//(domain_name.split(':')[0]);
-                //window.location.href = "https://" + location.host;//(domain_name.split(':')[0]);
+                window.location.href = "http://" + location.host;
+                //window.location.href = "https://" + location.host;
             }
             else {
                 update_data(e.data);

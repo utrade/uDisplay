@@ -1,6 +1,5 @@
-/* 
- * static/uDisplay/js/models/accounts.js
- * Created by Mayank Jain
+/*
+ * static/js/models/accounts.js
  */
 
 var app = app || {};

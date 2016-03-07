@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Third Party Stuff
+
 # Third Party Stuff
 from django.test import TestCase
 

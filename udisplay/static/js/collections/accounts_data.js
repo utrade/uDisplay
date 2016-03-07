@@ -1,6 +1,5 @@
 /*
- * static/uDisplay/js/collections/accounts_data.js
- * Created by Mayank Jain
+ * static/js/collections/accounts_data.js
  */
 
 var app = app || {}

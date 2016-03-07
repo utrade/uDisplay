@@ -99,12 +99,7 @@ def send_msg_to_web_console(message):
     for client in Listeners.keys():
         try:
             request = Listeners[client]
-            if message.get('updaterisk'):
-                data = message.get('updaterisk').get('riskdata')
-                data['accountid'] = message.get('updaterisk').get('accountid')
-                request.send(message.get('updaterisk').get('riskdata'))
-            if message.get('updateaccount'):
-                request.send(message.get('updateaccount').get('accountdata'))
+            request.send(message)
         except BaseException as e:
             logger.error("Error in sending data to user {}: {}".format(client, e))
 
