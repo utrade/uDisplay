@@ -1,0 +1,36 @@
+---
+- name: get the latest code
+  git: repo={{ project_repo_url }} dest={{ project_path }} version={{ repo_version }} accept_hostkey=true
+  sudo: false
+  tags: ['deploy', 'always']
+
+- name: manually create the initial virtualenv
+  command: virtualenv {{ project_path }}/venv -p python{{ py_version }} creates={{ project_path }}/venv
+  sudo: false
+  tags: ['configure', 'deploy']
+
+- name: install django python dependencies
+  pip: requirements={{ project_path }}/{{ django_requirements_file }} virtualenv={{ project_path }}/venv
+  sudo: false
+  tags: ['deploy']
+
+- name: copy supervisor gunicorn configuration
+  template: src=supervisor_gunicorn.conf.j2 dest=/etc/supervisor/conf.d/gunicorn.conf
+  notify: restart gunicorn
+  tags: ['deploy']
+
+- name: migrate database
+  django_manage: command=migrate app_path={{ project_path }} virtualenv={{ project_path }}/venv
+  sudo: false
+  tags: ['deploy']
+
+- name: collect static
+  django_manage: command=collectstatic app_path={{ project_path }} virtualenv={{ project_path }}/venv
+  sudo: false
+  tags: ['deploy']
+
+- name: reload server
+  shell: sudo supervisorctl restart all
+  tags: ['deploy']
+
+

@@ -1,60 +1,70 @@
-#uDisplay
-####uDisplay is web module based on Django and Tornado to display realtime data on web.
+uDisplay
+==============================
 
-#Getting Started
+__Version:__ 0.1.0-dev
 
-## Installing Dependencies
-```bash
-   pip install -r requirements.txt
+uDisplay is web module based on Django and Tornado to display realtime data on web.
+
+## Getting up and running
+
+Minimum requirements: **pip, fabric & [postgres][install-postgres]**, setup is tested on Mac OSX only.
+
 ```
-## Setting Up
-Copy **uDisplay.example_local_settings.py** to **uDisplay.local_settings.py**.
-Change settings in **uDisplay.local_settings.py**.
-
-Modify **utils.config.py** to attach uDisplay to other data servers or test it with mock servers
-
-* utils.test_server.py for authentication
-* utils.push_server.py to push realtime data to be published
-
-## Running
-```python
-   python manage.py runserver 0.0.0.0:port
-   python socket_server.py
+brew install postgres
+[sudo] pip install fabric
 ```
 
-* Runserver starts django server
-* socket_server starts the websocket server to push realtime data to web
+[install-postgres]: http://www.gotealeaf.com/blog/how-to-install-postgresql-on-a-mac
 
-```python
-   python utils/test_server.py
-   python utils/push_server.py
+In your terminal, type or copy-paste the following:
+
+    git clone git@github.com:jainmickey/uDisplay.git; cd uDisplay; fab init
+
+Go grab a cup of coffee, we bake your hot development machine.
+
+Useful commands:
+
+- `fab serve` - start [django server](http://localhost:8000/)
+- `fab tornado` - start tornado server
+- `fab push_server` - start mock push server for testing
+- `fab deploy_docs` - deploy docs to server
+- `fab test` - run the test locally with ipdb
+
+**NOTE:** Checkout `fabfile.py` for all the options available and what/how they do it.
+
+
+## Deploying Project
+
+The deployment are managed via travis, but for the first time you'll need to set the configuration values on each of the server.
+
+Check out detailed server setup instruction [here](docs/backend/server_config.md).
+
+## How to release uDisplay
+
+Execute the following commands:
+
+```
+git checkout master
+fab test
+bumpversion release
+bumpversion --no-tag patch # 'patch' can be replaced with 'minor' or 'major'
+git push origin master
+git push origin master --tags
+git checkout qa
+git rebase master
+git push origin qa
 ```
 
-+ test_server is for authentication
+## Contributing
 
-  - Use any username and password for this server to get authenticated.
-  - If you want push data from push_server use **utrade** as username.
+Golden Rule:
 
-+ push_server publish mock data for **utrade** client.
+> Anything in **master** is always **deployable**.
 
-# License
+Avoid working on `master` branch, create a new branch with meaningful name, send pull request asap. Be vocal!
 
-    uDisplay is web module based on Django and Tornado to display realtime data on web.
-    Copyright (C) 2015 uTrade Solutions Pvt. Ltd.
+Refer to [CONTRIBUTING.md][contributing]
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+[contributing]: http://github.com/jainmickey/uDisplay/tree/master/CONTRIBUTING.md
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-# Contributions
-
-Pull Requests and Bug reports are welcome via Github.
+--------

@@ -1,0 +1,37 @@
+# {{ ansible_managed }}
+# Uncomment following line to enforce ssl
+# server {
+#     listen         80;
+#     server_name    {{ domain_name }};
+#     return         301 https://$server_name$request_uri;
+# }
+
+# Serve static files and redirect any other request to django wsgi server
+server {
+    # comment out following line to enforce ssl
+    listen       80;
+    # Uncomment following line to enforce ssl
+    # listen       443;
+
+    server_name  {{ domain_name }};
+    access_log   /var/log/nginx/{{ domain_name }}.access.log;
+    error_log    /var/log/nginx/{{ domain_name }}.error.log;
+
+    client_max_body_size {{ nginx_max_file_size }}M;
+
+    # Uncomment following line to enforce ssl
+    # ssl on;
+    # Make sure following files exist
+    # ssl_certificate /etc/nginx/ssl/{{ domain_name }}.chained.crt;
+    # ssl_certificate_key /etc/nginx/ssl/{{ domain_name }}.key;
+
+    # Setup named location for Django requests and handle proxy details
+    location / {
+            proxy_pass         http://127.0.0.1:8000;
+            proxy_redirect     off;
+            proxy_set_header   Host             $host;
+            proxy_set_header   X-Real-IP        $remote_addr;
+            proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+            proxy_set_header   X-Forwarded-Proto $scheme;
+    }
+}

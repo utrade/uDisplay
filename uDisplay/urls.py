@@ -1,17 +1,52 @@
-"""
-uDisplay/urls.py
-Base urls file
-Created by Mayank Jain
-"""
-from django.conf.urls import patterns, include, url
-from .views import login_view, logout_view
-#from django.contrib import admin
-#admin.autodiscover()
+# -*- coding: utf-8 -*-
+'''Root url routering file.
 
-urlpatterns = patterns('',
-    url(r'^login/$',  login_view),
-    url(r'^logout/$',  logout_view),
-    url(r'^',  include('risk_management.urls')),
+You should put the url config in their respective app putting only a
+refernce to them here.
+'''
+from __future__ import absolute_import, unicode_literals
 
- #   url(r'^admin/', include(admin.site.urls)),
-)
+# Third Party Stuff
+from django.conf import settings
+from django.conf.urls import include, url
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.views import defaults as dj_default_views
+
+# uDisplay Stuff
+from udisplay.base import views as base_views
+
+from .routers import router
+
+handler500 = base_views.server_error
+
+urlpatterns = [
+
+    url(r'^(?P<filename>(robots.txt)|(humans.txt))$',
+        base_views.root_txt_files, name='root-txt-files'),
+
+    # Rest API
+    url(r'^api/', include(router.urls)),
+
+    # Browsable API
+    url(r'^api/auth-n/', include('rest_framework.urls', namespace='rest_framework')),
+
+    # Django Admin
+    url(r'^admin/', include(admin.site.urls)),
+
+    # pages/ landing pages
+    url(r'^', include("udisplay.pages.urls", namespace="pages")),
+
+    # password, login, register, ...
+    url(r'^', include('udisplay.users.urls')),
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+if settings.DEBUG:
+    urlpatterns += [
+        url(r'^400/$', dj_default_views.bad_request, kwargs={'exception': Exception("Bad Request!")}),
+        url(r'^403/$', dj_default_views.permission_denied, kwargs={'exception': Exception("Permission Denied!")}),
+        url(r'^404/$', dj_default_views.page_not_found, kwargs={'exception': Exception("Not Found!")}),
+        url(r'^500/$', handler500),
+    ]
